@@ -1,0 +1,44 @@
+# Одна кнопка «Run workflow» — публикует отзывы и fix на сайт electron
+# Нужен секрет ELECTRON_GH_TOKEN (см. ИНСТРУКЦИЯ_ТЕЛЕФОН.txt)
+name: Deploy to electron site
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check token
+        env:
+          GH_TOKEN: ${{ secrets.ELECTRON_GH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Добавьте секрет ELECTRON_GH_TOKEN в настройках репозитория"
+            exit 1
+          fi
+
+      - name: Push updates to dm809/electron
+        env:
+          GH_TOKEN: ${{ secrets.ELECTRON_GH_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/dm809/electron.git" electron
+          cd electron
+
+          cp ../electron-updates/js/reviews-data.js js/reviews-data.js
+          cp ../electron-updates/data/reviews.json data/reviews.json
+          cp ../electron-updates/js/config.js js/config.js
+          mkdir -p .github/workflows
+          cp ../electron-updates/.github/workflows/supabase-keepalive.yml .github/workflows/supabase-keepalive.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add js/reviews-data.js data/reviews.json js/config.js .github/workflows/supabase-keepalive.yml
+          git diff --staged --quiet && echo "Nothing to change" && exit 0
+          git commit -m "Отзывы Ekaterina, Наталья, SVITLANA + fix Supabase + автопинг"
+          git push origin main
+
+      - name: Done
+        run: echo "Готово! Сайт обновится через 1-2 минуты."

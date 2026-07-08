@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════
+  С ТЕЛЕФОНА — 3 ШАГА (один раз)
+═══════════════════════════════════════════════
+
+ШАГ 1 — Создать ключ (токен)
+  Открой в браузере телефона:
+  https://github.com/settings/tokens/new
+
+  - Note: electron
+  - Expiration: 90 days
+  - Галочка: repo (вся секция)
+  - Внизу: Generate token
+  - СКОПИРУЙ токен (начинается с ghp_)
+
+ШАГ 2 — Вставить ключ в GitHub
+  Открой:
+  https://github.com/dm809/arduino-wireless-buttons/settings/secrets/actions/new
+
+  - Name: ELECTRON_GH_TOKEN
+  - Secret: вставь скопированный ghp_...
+  - Add secret
+
+ШАГ 3 — Нажать одну кнопку
+  Открой:
+  https://github.com/dm809/arduino-wireless-buttons/actions/workflows/deploy-to-electron.yml
+
+  - Кнопка «Run workflow» (справа)
+  - Снова «Run workflow» (зелёная)
+  - Подожди 1 минуту — зелёная галочка
+
+ГОТОВО! Сайт dmitrii-elektron.es обновится сам.
+
+═══════════════════════════════════════════════
+  ЧТО ОБНОВИТСЯ
+═══════════════════════════════════════════════
+  + 3 отзыва (Ekaterina M, Наталья, SVITLANA)
+  + Исправлен адрес Supabase
+  + Автопинг — база не будет засыпать
