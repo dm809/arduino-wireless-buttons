@@ -20,7 +20,7 @@ jobs:
       - name: Ping Supabase reviews table
         run: |
           STATUS=$(curl -s -o /tmp/supabase_ping.txt -w "%{http_code}" \
-            "https://cxqiceminxlsigoibhlh.supabase.co/rest/v1/reviews?select=id&limit=1" \
+            "https://cxqiceminlsigoiubhlh.supabase.co/rest/v1/reviews?select=id&limit=1" \
             -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cWljZW1pbmxzaWdvaXViaGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5Mjg5NDQsImV4cCI6MjA5ODUwNDk0NH0.W4S4EWhjWfQWHzAKSDb0ryZY2TUJML37WZccKvnUz5w" \
             -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cWljZW1pbmxzaWdvaXViaGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5Mjg5NDQsImV4cCI6MjA5ODUwNDk0NH0.W4S4EWhjWfQWHzAKSDb0ryZY2TUJML37WZccKvnUz5w")
           echo "HTTP status: $STATUS"
