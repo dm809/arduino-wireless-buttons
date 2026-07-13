@@ -83,8 +83,8 @@ const SITE_CONFIG = {
     hero: 'images/logo.jpg',
     // Галерея: фото, YouTube и MP4. Примеры ниже — раскомментируй и добавь свои.
     gallery: [
-      { type: 'image', src: 'images/gallery-13.jpg', altKey: 'gal13' },
-      { type: 'image', src: 'images/gallery-14.jpg', altKey: 'gal14' },
+      { type: 'image', src: 'images/gallery-13.png', altKey: 'gal13' },
+      { type: 'image', src: 'images/gallery-14.png', altKey: 'gal14' },
       { type: 'image', src: 'images/gallery-8.jpg', altKey: 'gal8' },
       { type: 'image', src: 'images/gallery-9.jpg', altKey: 'gal9' },
       { type: 'image', src: 'images/gallery-10.jpg', altKey: 'gal10' },
