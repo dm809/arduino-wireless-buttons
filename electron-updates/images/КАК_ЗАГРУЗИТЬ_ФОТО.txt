@@ -1,0 +1,20 @@
+Загрузить 2 фото на сайт (с телефона):
+
+1. Переименуй файлы:
+   1308.png  →  gallery-13.png
+   1313.png  →  gallery-14.png
+
+2. Открой в браузере:
+   https://github.com/dm809/electron/upload/main/images
+
+3. Нажми «choose files» и выбери gallery-13.png и gallery-14.png
+
+4. Commit changes
+
+5. Запусти обновление (если есть токен):
+   https://github.com/dm809/arduino-wireless-buttons/actions/workflows/deploy-to-electron.yml
+   → Run workflow
+
+Или отредактируй config вручную:
+   https://github.com/dm809/electron/edit/main/js/config.js
+   youtubeId: '0zbjmG7aUn8'
