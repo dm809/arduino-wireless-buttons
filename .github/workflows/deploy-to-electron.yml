@@ -30,14 +30,19 @@ jobs:
           cp ../electron-updates/js/reviews-data.js js/reviews-data.js
           cp ../electron-updates/data/reviews.json data/reviews.json
           cp ../electron-updates/js/config.js js/config.js
-          mkdir -p .github/workflows
+          cp ../electron-updates/js/i18n.js js/i18n.js
+          mkdir -p .github/workflows images
           cp ../electron-updates/.github/workflows/supabase-keepalive.yml .github/workflows/supabase-keepalive.yml
+          if [ -d ../electron-updates/images ]; then
+            cp ../electron-updates/images/*.jpg images/ 2>/dev/null || true
+          fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add js/reviews-data.js data/reviews.json js/config.js .github/workflows/supabase-keepalive.yml
+          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js .github/workflows/supabase-keepalive.yml
+          git add images/gallery-13.jpg images/gallery-14.jpg 2>/dev/null || true
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "Отзывы Ekaterina, Наталья, SVITLANA + fix Supabase + автопинг"
+          git commit -m "YouTube Shorts, новые фото в галерее, отзывы, fix Supabase"
           git push origin main
 
       - name: Done
