@@ -1,0 +1,26 @@
+═══════════════════════════════════════════════
+  5 ФОТО С РЕАЛЬНЫХ РАБОТ — как загрузить
+═══════════════════════════════════════════════
+
+Переименуй фото ПЕРЕД загрузкой:
+
+  Фото 1 (Daikin на крыше, ты в футболке)     → gallery-work-1.jpg
+  Фото 2 (Daikin, баннер ELEKTRON)            → gallery-work-2.jpg
+  Фото 3 (ремонт наружного блока)             → gallery-work-3.jpg
+  Фото 4 (настенный кондиционер сзади)        → gallery-work-4.jpg
+  Фото 5 (двое в мастерской, Daikin VRV)      → gallery-work-5.jpg
+
+Загрузить на GitHub:
+  https://github.com/dm809/electron/upload/main/images
+
+Выбери все 5 файлов → Commit changes
+
+Потом опубликовать код (галерея + отзывы):
+  https://github.com/dm809/arduino-wireless-buttons/actions/workflows/deploy-to-electron.yml
+  → Run workflow
+
+Или вручную заменить config.js и i18n.js:
+  https://raw.githubusercontent.com/dm809/arduino-wireless-buttons/main/electron-updates/js/config.js
+  https://raw.githubusercontent.com/dm809/arduino-wireless-buttons/main/electron-updates/js/i18n.js
+
+Старые AI-фото (gallery-8…12.jpg) больше не используются.
