@@ -1,14 +1,10 @@
-# Пинок Supabase раз в 3 дня — бесплатный проект не засыпает (лимит: 7 дней без активности)
+# Пинок Supabase каждые 3 дня — бесплатный проект не засыпает
 name: Supabase keepalive
 
 on:
   schedule:
     - cron: '0 9 */3 * *'
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/supabase-keepalive.yml'
 
 permissions:
   contents: read
@@ -17,16 +13,15 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase reviews table
+      - name: Ping Supabase
         run: |
-          STATUS=$(curl -s -o /tmp/supabase_ping.txt -w "%{http_code}" \
+          STATUS=$(curl -s -o /tmp/ping.txt -w "%{http_code}" \
             "https://cxqiceminlsigoiubhlh.supabase.co/rest/v1/reviews?select=id&limit=1" \
             -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cWljZW1pbmxzaWdvaXViaGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5Mjg5NDQsImV4cCI6MjA5ODUwNDk0NH0.W4S4EWhjWfQWHzAKSDb0ryZY2TUJML37WZccKvnUz5w" \
             -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cWljZW1pbmxzaWdvaXViaGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5Mjg5NDQsImV4cCI6MjA5ODUwNDk0NH0.W4S4EWhjWfQWHzAKSDb0ryZY2TUJML37WZccKvnUz5w")
-          echo "HTTP status: $STATUS"
-          cat /tmp/supabase_ping.txt || true
-          if [ "$STATUS" != "200" ]; then
-            echo "::warning::Supabase ping failed (status $STATUS). If project is paused, restore at supabase.com/dashboard"
-            exit 0
+          echo "HTTP: $STATUS"
+          if [ "$STATUS" = "200" ] || [ "$STATUS" = "404" ]; then
+            echo "Supabase is alive."
+          else
+            echo "::warning::Supabase paused? Restore at supabase.com/dashboard"
           fi
-          echo "Supabase is alive."

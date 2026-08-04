@@ -1,9 +1,12 @@
-# Одна кнопка «Run workflow» — публикует отзывы и fix на сайт electron
-# Нужен секрет ELECTRON_GH_TOKEN (см. ИНСТРУКЦИЯ_ТЕЛЕФОН.txt)
+# Одна кнопка «Run workflow» — публикует обновления на сайт electron
 name: Deploy to electron site
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'electron-updates/**'
 
 jobs:
   deploy:
@@ -16,34 +19,27 @@ jobs:
           GH_TOKEN: ${{ secrets.ELECTRON_GH_TOKEN }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "::error::Добавьте секрет ELECTRON_GH_TOKEN в настройках репозитория"
+            echo "::error::Добавьте секрет ELECTRON_GH_TOKEN"
             exit 1
           fi
 
-      - name: Push updates to dm809/electron
+      - name: Push to dm809/electron
         env:
           GH_TOKEN: ${{ secrets.ELECTRON_GH_TOKEN }}
         run: |
           git clone "https://x-access-token:${GH_TOKEN}@github.com/dm809/electron.git" electron
           cd electron
-
           cp ../electron-updates/js/reviews-data.js js/reviews-data.js
           cp ../electron-updates/data/reviews.json data/reviews.json
           cp ../electron-updates/js/config.js js/config.js
-          cp ../electron-updates/js/i18n.js js/i18n.js
           mkdir -p .github/workflows images
-          cp ../electron-updates/.github/workflows/supabase-keepalive.yml .github/workflows/supabase-keepalive.yml
+          cp ../electron-updates/.github/workflows/supabase-keepalive.yml .github/workflows/
           if [ -d ../electron-updates/images ]; then
-            cp ../electron-updates/images/*.jpg ../electron-updates/images/*.png images/ 2>/dev/null || true
+            cp ../electron-updates/images/* images/ 2>/dev/null || true
           fi
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js .github/workflows/supabase-keepalive.yml
-          git add images/gallery-13.jpg images/gallery-14.jpg images/gallery-13.png images/gallery-14.png 2>/dev/null || true
+          git add -A
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "YouTube Shorts, новые фото в галерее, отзывы, fix Supabase"
+          git commit -m "10 новых отзывов, fix Supabase, автопинг"
           git push origin main
-
-      - name: Done
-        run: echo "Готово! Сайт обновится через 1-2 минуты."

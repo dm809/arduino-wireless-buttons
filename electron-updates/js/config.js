@@ -15,15 +15,16 @@ const SITE_CONFIG = {
   whatsappUrl: 'https://wa.me/message/QRZS65C6P4KGM1',
   whatsappPhone: '34643292197',
 
-  instagramUrl: 'https://www.instagram.com/dmitrii_electron',
-  instagramUsername: 'dmitrii_electron',
+  instagramUrl: 'https://www.instagram.com/dmitrii_elektron?igsh=cTJldzIzb3F0dTBo',
+  instagramUsername: 'dmitrii_elektron',
 
-  youtubeUrl: 'https://youtube.com/@electronica-u1f',
+  youtubeUrl: 'https://www.youtube.com/@electronica-u1f',
 
   // Видео-вступление (отдельный блок, не галерея)
   introVideo: {
     enabled: true,
     youtubeId: '0zbjmG7aUn8',
+  
     lang: 'es',
   },
 
@@ -83,13 +84,13 @@ const SITE_CONFIG = {
     hero: 'images/logo.jpg',
     // Галерея: фото, YouTube и MP4. Примеры ниже — раскомментируй и добавь свои.
     gallery: [
-      { type: 'image', src: 'images/gallery-13.png', altKey: 'gal13' },
-      { type: 'image', src: 'images/gallery-14.png', altKey: 'gal14' },
       { type: 'image', src: 'images/gallery-8.jpg', altKey: 'gal8' },
       { type: 'image', src: 'images/gallery-9.jpg', altKey: 'gal9' },
       { type: 'image', src: 'images/gallery-10.jpg', altKey: 'gal10' },
       { type: 'image', src: 'images/gallery-11.jpg', altKey: 'gal11' },
-      { type: 'image', src: 'images/gallery-12.jpg', altKey: 'gal12' },
+      { type: 'image', src: 'images/gallery-12.jpg', altKey: 'gal12' },                                               
+      { type: 'image', src: 'images/gallery-13.png' },
+      { type: 'image', src: 'images/gallery-14.png' },
       // YouTube — videoId из ссылки watch?v=XXXX:
       // { type: 'youtube', videoId: 'XXXXXXXX', altKey: 'galVideo1' },
       // Свой ролик — положи MP4 в images/videos/:
@@ -104,8 +105,7 @@ const SITE_CONFIG = {
 
   // ── Модерация отзывов (без WhatsApp) ──
   // Инструкция: supabase-setup.sql + supabase-admin-pin.sql
-  // Если «Failed to fetch» — supabase.com → Restore project
-  // Автопинг: .github/workflows/supabase-keepalive.yml (каждые 3 дня)
+  // Если «Failed to fetch» — зайди в supabase.com и нажми Restore project
   supabase: {
     url: 'https://cxqiceminlsigoiubhlh.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cWljZW1pbmxzaWdvaXViaGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5Mjg5NDQsImV4cCI6MjA5ODUwNDk0NH0.W4S4EWhjWfQWHzAKSDb0ryZY2TUJML37WZccKvnUz5w',
