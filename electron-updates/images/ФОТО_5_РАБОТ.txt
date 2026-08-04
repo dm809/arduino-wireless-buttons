@@ -24,3 +24,4 @@
   https://raw.githubusercontent.com/dm809/arduino-wireless-buttons/main/electron-updates/js/i18n.js
 
 Старые AI-фото (gallery-8…12.jpg) больше не используются.
+# deploy trigger 20260804
