@@ -33,9 +33,18 @@ jobs:
           cp ../electron-updates/data/reviews.json data/reviews.json
           cp ../electron-updates/js/config.js js/config.js
           cp ../electron-updates/js/i18n.js js/i18n.js
+
+          # Фото загружены с неправильными именами — переименовать под config.js
+          cd images
+          [ -f 'gallery-work-3 (1).jpg' ] && git mv 'gallery-work-3 (1).jpg' gallery-work-1.jpg
+          [ -f 'gallery-work-3 (2).jpg' ] && git mv 'gallery-work-3 (2).jpg' gallery-work-2.jpg
+          [ -f 'gallery-work- (3).jpg' ] && git mv 'gallery-work- (3).jpg' gallery-work-3.jpg
+          [ -f 'gallery-work- (5).jpg' ] && git mv 'gallery-work- (5).jpg' gallery-work-5.jpg
+          cd ..
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js
+          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js images/
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "20 отзывов + галерея реальных работ"
+          git commit -m "Галерея: переименовать 5 фото работ + обновления сайта"
           git push origin main
