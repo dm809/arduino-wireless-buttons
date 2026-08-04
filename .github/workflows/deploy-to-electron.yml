@@ -32,14 +32,10 @@ jobs:
           cp ../electron-updates/js/reviews-data.js js/reviews-data.js
           cp ../electron-updates/data/reviews.json data/reviews.json
           cp ../electron-updates/js/config.js js/config.js
-          mkdir -p .github/workflows images
-          cp ../electron-updates/.github/workflows/supabase-keepalive.yml .github/workflows/
-          if [ -d ../electron-updates/images ]; then
-            cp ../electron-updates/images/* images/ 2>/dev/null || true
-          fi
+          cp ../electron-updates/js/i18n.js js/i18n.js
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "10 новых отзывов, fix Supabase, автопинг"
+          git commit -m "20 отзывов + галерея реальных работ"
           git push origin main
