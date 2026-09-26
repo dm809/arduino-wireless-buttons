@@ -34,6 +34,8 @@ jobs:
           cp ../electron-updates/js/config.js js/config.js
           cp ../electron-updates/js/i18n.js js/i18n.js
           cp ../electron-updates/css/style.css css/style.css
+          mkdir -p images/partners
+          cp -r ../electron-updates/images/partners/. images/partners/
 
           # YouTube-ссылки в HTML (fallback до загрузки JS)
           sed -i 's|https://www.youtube.com/@electronica-u1f|https://www.youtube.com/@elektron_dmitrii|g' index.html
@@ -52,5 +54,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js css/style.css index.html images/
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "YouTube: новое видео + канал @elektron_dmitrii, язык на мобильном"
+          git commit -m "Партнёр Reforma-Spain + 2 новых отзыва"
           git push origin main
