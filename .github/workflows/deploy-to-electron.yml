@@ -33,19 +33,21 @@ jobs:
           cp ../electron-updates/data/reviews.json data/reviews.json
           cp ../electron-updates/js/config.js js/config.js
           cp ../electron-updates/js/i18n.js js/i18n.js
+          cp ../electron-updates/js/main.js js/main.js
           cp ../electron-updates/css/style.css css/style.css
+          cp ../electron-updates/index.html index.html
           mkdir -p images/partners
           cp -r ../electron-updates/images/partners/. images/partners/
 
           # YouTube-ссылки в HTML (fallback до загрузки JS)
           sed -i 's|https://www.youtube.com/@electronica-u1f|https://www.youtube.com/@elektron_dmitrii|g' index.html
-          sed -i 's|style.css?v=[0-9]*|style.css?v=29|g' index.html
-          sed -i 's|config.js?v=[0-9]*|config.js?v=29|g' index.html
-          sed -i 's|reviews-data.js?v=[0-9]*|reviews-data.js?v=29|g' index.html
-          sed -i 's|i18n.js?v=[0-9]*|i18n.js?v=29|g' index.html
-          sed -i 's|main.js?v=[0-9]*|main.js?v=29|g' index.html
-          sed -i 's|reviews.js?v=[0-9]*|reviews.js?v=29|g' index.html
-          sed -i 's|site-reviews-store.js?v=[0-9]*|site-reviews-store.js?v=29|g' index.html
+          sed -i 's|style.css?v=[0-9]*|style.css?v=30|g' index.html
+          sed -i 's|config.js?v=[0-9]*|config.js?v=30|g' index.html
+          sed -i 's|reviews-data.js?v=[0-9]*|reviews-data.js?v=30|g' index.html
+          sed -i 's|i18n.js?v=[0-9]*|i18n.js?v=30|g' index.html
+          sed -i 's|main.js?v=[0-9]*|main.js?v=30|g' index.html
+          sed -i 's|reviews.js?v=[0-9]*|reviews.js?v=30|g' index.html
+          sed -i 's|site-reviews-store.js?v=[0-9]*|site-reviews-store.js?v=30|g' index.html
 
           # Фото загружены с неправильными именами — переименовать под config.js
           cd images
@@ -57,7 +59,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js css/style.css index.html images/
+          git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js js/main.js css/style.css index.html images/
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "Партнёры: Reforma-Spain + сброс кэша v29"
+          git commit -m "Видео в рамке + синие акценты (Reforma-style)"
           git push origin main
