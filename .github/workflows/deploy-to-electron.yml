@@ -41,13 +41,13 @@ jobs:
 
           # YouTube-ссылки в HTML (fallback до загрузки JS)
           sed -i 's|https://www.youtube.com/@electronica-u1f|https://www.youtube.com/@elektron_dmitrii|g' index.html
-          sed -i 's|style.css?v=[0-9]*|style.css?v=35|g' index.html
-          sed -i 's|config.js?v=[0-9]*|config.js?v=35|g' index.html
-          sed -i 's|reviews-data.js?v=[0-9]*|reviews-data.js?v=35|g' index.html
-          sed -i 's|i18n.js?v=[0-9]*|i18n.js?v=35|g' index.html
-          sed -i 's|main.js?v=[0-9]*|main.js?v=35|g' index.html
-          sed -i 's|reviews.js?v=[0-9]*|reviews.js?v=35|g' index.html
-          sed -i 's|site-reviews-store.js?v=[0-9]*|site-reviews-store.js?v=35|g' index.html
+          sed -i 's|style.css?v=[0-9]*|style.css?v=36|g' index.html
+          sed -i 's|config.js?v=[0-9]*|config.js?v=36|g' index.html
+          sed -i 's|reviews-data.js?v=[0-9]*|reviews-data.js?v=36|g' index.html
+          sed -i 's|i18n.js?v=[0-9]*|i18n.js?v=36|g' index.html
+          sed -i 's|main.js?v=[0-9]*|main.js?v=36|g' index.html
+          sed -i 's|reviews.js?v=[0-9]*|reviews.js?v=36|g' index.html
+          sed -i 's|site-reviews-store.js?v=[0-9]*|site-reviews-store.js?v=36|g' index.html
 
           # Фото загружены с неправильными именами — переименовать под config.js
           cd images
