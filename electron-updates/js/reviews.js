@@ -1,0 +1,319 @@
+(function () {
+  'use strict';
+
+  const APPROVED_KEY = 'elektron-approved-reviews';
+
+  function getT(key) {
+    if (typeof window.__siteT === 'function') return window.__siteT(key);
+    const lang = localStorage.getItem('site-lang') || 'ru';
+    const dict = I18N[lang] || I18N.ru;
+    return dict[key] || I18N.ru[key] || key;
+  }
+
+  function starsHtml(rating) {
+    const n = Math.min(5, Math.max(1, Number(rating) || 5));
+    const stars = Array.from({ length: 5 }, (_, i) => {
+      const filled = i < n;
+      return `<span class="star-display__star${filled ? ' star-display__star--filled' : ''}" aria-hidden="true">★</span>`;
+    }).join('');
+    return `<span class="star-display" aria-label="${n}/5">${stars}</span>`;
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const locale = document.documentElement.lang || 'ru';
+      return new Date(dateStr).toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function loadLocalApproved() {
+    try {
+      return JSON.parse(localStorage.getItem(APPROVED_KEY) || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function reviewKey(r) {
+    return `${r.name}|${r.rating}|${r.text}`.toLowerCase();
+  }
+
+  function mergeApproved(...lists) {
+    const seen = new Set();
+    const out = [];
+
+    lists.filter(Array.isArray).flat().forEach((r) => {
+      if (!r || !r.name || !r.text) return;
+      const key = reviewKey(r);
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({ ...r, _pending: false });
+    });
+
+    return out;
+  }
+
+  function getEmbeddedReviews() {
+    if (typeof SITE_REVIEWS !== 'undefined' && SITE_REVIEWS.length) return SITE_REVIEWS;
+    if (typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.reviews?.length) return SITE_CONFIG.reviews;
+    return [];
+  }
+
+  function buildApprovedList() {
+    const local = loadLocalApproved();
+    const config = SITE_CONFIG.reviews || [];
+    return mergeApproved([], local, config);
+  }
+
+  function fetchSiteJsonReviews() {
+    if (!window.SiteReviewsStore) return Promise.resolve([]);
+    return SiteReviewsStore.fetchFromSite(8000);
+  }
+
+  function paintReviews(all) {
+    const list = document.getElementById('reviews-list');
+    if (!list) return;
+
+    if (!all.length) return;
+
+    list.innerHTML = all.map((r) => renderReviewCard(r)).join('');
+  }
+
+  function renderReviewCard(review) {
+    return `
+      <article class="review-card">
+        <div class="review-card__head">
+          <div class="review-card__author">${escapeHtml(review.name)}</div>
+        </div>
+        <div class="review-card__rating-wrap" aria-label="${review.rating}/5">${starsHtml(review.rating)}</div>
+        <p class="review-card__text">${escapeHtml(review.text)}</p>
+        ${review.date ? `<time class="review-card__date">${formatDate(review.date)}</time>` : ''}
+      </article>`;
+  }
+
+  async function renderReviews() {
+    const embedded = getEmbeddedReviews();
+    paintReviews(embedded);
+
+    try {
+      const siteJson = await fetchSiteJsonReviews();
+      const merged = mergeApproved(embedded, siteJson);
+      if (merged.length) paintReviews(merged);
+    } catch (err) {
+      console.warn('Reviews fetch skipped:', err);
+    }
+  }
+
+  function adminBaseUrl() {
+    const path = typeof window.getSiteBasePath === 'function'
+      ? getSiteBasePath()
+      : (SITE_CONFIG.basePath || '/electron/');
+    const base = String(path).replace(/\/?$/, '/');
+    if (location.protocol === 'file:') return `https://dmitrii-elektron.es${base}`;
+    if (location.origin.includes('github.io')) return `${location.origin}${base}`;
+    return `${location.origin}${base}`;
+  }
+
+  function buildApproveUrl(reviewId) {
+    const pin = SITE_CONFIG.adminLocalPin || '472891';
+    return `${adminBaseUrl()}admin.html?approve=${encodeURIComponent(reviewId)}&pin=${encodeURIComponent(pin)}`;
+  }
+
+  function buildPublishUrl(review) {
+    const pin = SITE_CONFIG.adminLocalPin || '472891';
+    const q = new URLSearchParams({
+      pub: '1',
+      pin,
+      name: review.name,
+      r: String(review.rating),
+      text: review.text.slice(0, 300),
+    });
+    return `${adminBaseUrl()}admin.html?${q.toString()}`;
+  }
+
+  async function notifyOwnerByEmail(review) {
+    const email = SITE_CONFIG.notifyEmail;
+    if (!email) throw new Error('notify email not configured');
+
+    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: '⭐ Новый отзыв ELEKTRON',
+          _template: 'table',
+          _captcha: 'false',
+          name: review.name,
+          rating: `${stars} (${review.rating}/5)`,
+          message: review.text,
+          'Дата': new Date().toLocaleString('es-ES'),
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (String(data.success) !== 'true') throw new Error('FormSubmit rejected');
+    } catch (err) {
+      console.warn('Email notify failed:', err);
+      throw err;
+    }
+  }
+
+  async function submitReview(review) {
+    await notifyOwnerByEmail(review);
+    return { ok: true };
+  }
+
+  function resetStarRating() {
+    const hidden = document.getElementById('review-rating');
+    if (hidden) hidden.value = '5';
+    setStarRating(5);
+  }
+
+  function setStarRating(value) {
+    const container = document.getElementById('review-star-input');
+    if (!container) return;
+
+    container.querySelectorAll('.star-input__star').forEach((star) => {
+      const val = Number(star.dataset.value);
+      star.classList.toggle('star-input__star--active', val <= value);
+      star.setAttribute('aria-pressed', val === value ? 'true' : 'false');
+    });
+  }
+
+  function initStarRating() {
+    const container = document.getElementById('review-star-input');
+    const hidden = document.getElementById('review-rating');
+    if (!container || !hidden) return;
+
+    let current = Number(hidden.value) || 5;
+    const stars = container.querySelectorAll('.star-input__star');
+
+    function paint(preview) {
+      const val = preview ?? current;
+      stars.forEach((star) => {
+        star.classList.toggle('star-input__star--active', Number(star.dataset.value) <= val);
+      });
+    }
+
+    stars.forEach((star) => {
+      const val = Number(star.dataset.value);
+
+      star.addEventListener('click', () => {
+        current = val;
+        hidden.value = String(val);
+        paint();
+      });
+
+      star.addEventListener('mouseenter', () => paint(val));
+      star.addEventListener('focus', () => paint(val));
+    });
+
+    container.addEventListener('mouseleave', () => paint());
+    container.addEventListener('focusout', (e) => {
+      if (!container.contains(e.relatedTarget)) paint();
+    });
+
+    paint();
+  }
+
+  function initReviewForm() {
+    const form = document.getElementById('review-form');
+    const success = document.getElementById('review-success');
+    const errorEl = document.getElementById('review-error');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = form.querySelector('#review-name').value.trim();
+      const rating = form.querySelector('#review-rating').value;
+      const text = form.querySelector('#review-text').value.trim();
+      const submitBtn = form.querySelector('.reviews__submit');
+
+      const privacy = form.querySelector('.privacy-consent-checkbox');
+      if (!name || !text) {
+        form.reportValidity();
+        return;
+      }
+      if (!privacy?.checked) {
+        privacy?.focus();
+        return;
+      }
+
+      if (errorEl) errorEl.hidden = true;
+      if (submitBtn) submitBtn.disabled = true;
+
+      const review = {
+        name,
+        rating: Number(rating),
+        text,
+        date: new Date().toISOString(),
+      };
+
+      try {
+        await submitReview(review);
+        form.reset();
+        resetStarRating();
+        const cbAfter = form.querySelector('.privacy-consent-checkbox');
+        if (cbAfter) cbAfter.checked = false;
+
+        if (success) {
+          success.hidden = false;
+          setTimeout(() => { success.hidden = true; }, 8000);
+        }
+      } catch (err) {
+        console.error('Review submit error:', err);
+        if (errorEl) {
+          errorEl.textContent = getT('reviewsError');
+          errorEl.hidden = false;
+        }
+      } finally {
+        const cb = form.querySelector('.privacy-consent-checkbox');
+        if (submitBtn) submitBtn.disabled = !cb?.checked;
+      }
+    });
+  }
+
+  function updateReviewPlaceholders() {
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      el.placeholder = getT(el.dataset.i18nPlaceholder);
+    });
+  }
+
+  let reviewsBooted = false;
+
+  function bootReviews() {
+    if (reviewsBooted) return;
+    reviewsBooted = true;
+    initStarRating();
+    initReviewForm();
+    renderReviews();
+    updateReviewPlaceholders();
+    setInterval(renderReviews, 45000);
+  }
+
+  window.ReviewsModule = {
+    render: renderReviews,
+    updateReviewPlaceholders: updateReviewPlaceholders,
+    init: bootReviews,
+  };
+
+  bootReviews();
+})();
