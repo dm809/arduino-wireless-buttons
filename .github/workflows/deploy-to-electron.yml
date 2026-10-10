@@ -74,5 +74,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add js/reviews-data.js data/reviews.json js/config.js js/i18n.js js/main.js js/cookie-consent.js js/consent-forms.js js/legal-page.js js/reviews.js js/site-reviews-store.js css/style.css css/legal.css index.html aviso-legal politica-privacidad politica-cookies images/
           git diff --staged --quiet && echo "Nothing to change" && exit 0
-          git commit -m "Fix: rutas legales + datos titular (v=54)"
+          git commit -m "Legal: autónomo Málaga, IAE 691.1, LOPDGDD (v=55)"
           git push origin main
