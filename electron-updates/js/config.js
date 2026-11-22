@@ -6,7 +6,7 @@
 
 const SITE_CONFIG = {
   /** Меняйте при каждом деплое — мобильные браузеры подтягивают новую версию */
-  siteBuild: 65,
+  siteBuild: 66,
 
   brandName: 'ELEKTRON',
   ownerName: 'Dmytro Hordiienko',
@@ -258,6 +258,8 @@ const SITE_CONFIG = {
       { type: 'image', src: 'images/gallery-work-5.jpg', altKey: 'gal12' },
       { type: 'image', src: 'images/gallery-13.png', altKey: 'gal13' },
       { type: 'image', src: 'images/gallery-14.png', altKey: 'gal14' },
+      { type: 'image', src: 'images/gallery-work-6.jpg', altKey: 'gal15' },
+      { type: 'image', src: 'images/gallery-work-7.jpg', altKey: 'gal16' },
       // YouTube — videoId из ссылки watch?v=XXXX:
       // { type: 'youtube', videoId: 'XXXXXXXX', altKey: 'galVideo1' },
       // Свой ролик — положи MP4 в images/videos/:
